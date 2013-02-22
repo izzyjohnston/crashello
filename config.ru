@@ -1,6 +1,6 @@
-require 'heroku-sinatra-app'
+require './crashello'
 
-## There is no need to set directories here anymore;
-## Just run the application
+$stdout.sync = true
 
 run Sinatra::Application
+
