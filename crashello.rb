@@ -21,9 +21,9 @@ end
 post '/kaboom/:board_name' do
   list = nil
   if !params[:board_name].empty?
-    list = board.lists.find {|list| list.name == params[:board_name]}
+    list = @@board.lists.find {|list| list.name == params[:board_name]}
   elsif defined? ENV['TRELLO_LIST_NAME']
-    list = board.lists.find {|list| list.name == ENV['TRELLO_LIST_NAME']}
+    list = @@board.lists.find {|list| list.name == ENV['TRELLO_LIST_NAME']}
   else
     puts "Error posting to Trello: Trello board name not set"
   end
