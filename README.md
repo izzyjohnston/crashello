@@ -18,9 +18,16 @@ Instructions to get Trello info, taken from [Trellish](http://github.com/wgibbs/
 1. Visit https://trello.com/1/authorize?key=TRELLO\_API\_KEY\_FROM\_ABOVE&name=Crashello&expiration=never&response_type=token&scope=read,write
 1. Copy the token to `TRELLO_OAUTH_TOKEN`.
 
+
+
 # Crashlytics setup
 
 Go to your app’s settings > integrations and set the web hook to:
 
 `http://yourherokuname.herokuapp.com/kaboom`
 
+# Creating cards on any trello board or list
+If you don't want to use the environment variables to always set the board or list, you can use url parameters.
+
+The format for the webhook would be:
+`http://yourherokuname.herokuapp.com/kaboom/:board_name/:list_name`
