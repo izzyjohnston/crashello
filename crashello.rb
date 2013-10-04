@@ -11,6 +11,7 @@ end
 
 configure do
   @@board = Trello::Board.all.find {|board| board.name == ENV['TRELLO_BOARD_NAME']}
+  @@severity = ['blue', 'green', 'yellow', 'orange', 'red']
 end
 
 get '/' do
@@ -37,7 +38,7 @@ post '/kaboom/:list_name' do
 
       puts "Creating card with title: #{payload['title']} with details #{payload['url']}"
 
-      Trello::Card.create(
+      card = Trello::Card.create(
         :name => "CRASH: #{payload['title']}",
         :description => "#{payload['method']}
                         \nNumber of crashes:#{payload['crashes_count']}
@@ -45,6 +46,7 @@ post '/kaboom/:list_name' do
                         \n[Crashlytics](#{payload['url']})",
         :list_id => trello_list_id
         )
+      card.add_label(@@severity["#{payload['impact_level']}".to_i])
     end
   else
     puts "Error posting to Trello: Invalid board name"
