@@ -10,8 +10,7 @@ Trello.configure do |config|
 end
 
 configure do
-  @@board = Trello::Board.all.find {|board| board.name == ENV['TRELLO_BOARD_NAME']}
-  @@severity = ['blue', 'green', 'yellow', 'orange', 'red']
+  @@severity = %w(purple blue green yellow orange red)
 end
 
 get '/' do
@@ -19,15 +18,30 @@ get '/' do
   body ''
 end
 
-post '/kaboom/:list_name' do
+post '/kaboom/?:board_name/?:list_name' do
   list = nil
-  if !params[:list_name].empty?
-    list = @@board.lists.find {|list| list.name == params[:list_name]}
+  board = nil
+  error = nil
+  if !params[:board_name].empty?
+    board = Trello::Board.all.find {|board| board.name == params[:board_name]}
   elsif defined? ENV['TRELLO_LIST_NAME']
-    list = @@board.lists.find {|list| list.name == ENV['TRELLO_LIST_NAME']}
+    board = Trello::Board.all.find {|board| board.name == ENV['TRELLO_BOARD_NAME']}
   else
-    puts "Error posting to Trello: Trello board name not set"
+    error = "Board name not set"
   end
+  
+  if !board.nil? 
+    if !params[:list_name].empty?
+      list = board.lists.find {|list| list.name == params[:list_name]}
+    elsif defined? ENV['TRELLO_LIST_NAME']
+      list = board.lists.find {|list| list.name == ENV['TRELLO_LIST_NAME']}
+    else
+      error = "List name not set"
+    end
+  else
+    error = "Board name invalid"
+  end
+  
   if !list.nil?
     trello_list_id = list.id
 
@@ -49,7 +63,11 @@ post '/kaboom/:list_name' do
       card.add_label(@@severity["#{payload['impact_level']}".to_i])
     end
   else
-    puts "Error posting to Trello: Invalid board name"
+    error = "List name invalid"
+  end
+  
+  if !error.nil?
+    puts "Error adding card to Trello: #{error}"
   end
   status 200
   body ''
