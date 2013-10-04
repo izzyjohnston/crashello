@@ -18,10 +18,10 @@ get '/' do
   body ''
 end
 
-post '/kaboom/:board_name' do
+post '/kaboom/:list_name' do
   list = nil
-  if !params[:board_name].empty?
-    list = @@board.lists.find {|list| list.name == params[:board_name]}
+  if !params[:list_name].empty?
+    list = @@board.lists.find {|list| list.name == params[:list_name]}
   elsif defined? ENV['TRELLO_LIST_NAME']
     list = @@board.lists.find {|list| list.name == ENV['TRELLO_LIST_NAME']}
   else
@@ -38,8 +38,11 @@ post '/kaboom/:board_name' do
       puts "Creating card with title: #{payload['title']} with details #{payload['url']}"
 
       Trello::Card.create(
-        :name => "CRASH: #{payload['title']}\n#{payload['method']}",
-        :description => "[Crashlytics](#{payload['url']})",
+        :name => "CRASH: #{payload['title']}",
+        :description => "#{payload['method']}
+                        \nNumber of crashes:#{payload['crashes_count']}
+                        \nNumber of affected users:#{payload['impacted_devices_count']}
+                        \n[Crashlytics](#{payload['url']})",
         :list_id => trello_list_id
         )
     end
