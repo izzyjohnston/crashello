@@ -13,10 +13,10 @@ configure do
   @@board = Trello::Board.all.find {|board| board.name == ENV['TRELLO_BOARD_NAME']}
 end
 
-post '/kaboom/:board-name' do
+post '/kaboom/:board_name' do
   list = nil
-  if !params['board-name'].nil?
-    list = board.lists.find {|list| list.name == params[:board-name]}
+  if !params[:board_name].empty?
+    list = board.lists.find {|list| list.name == params[:board_name]}
   elsif defined? ENV['TRELLO_LIST_NAME']
     list = board.lists.find {|list| list.name == ENV['TRELLO_LIST_NAME']}
   else
@@ -41,6 +41,8 @@ post '/kaboom/:board-name' do
   else
     puts "Error posting to Trello: Invalid board name"
   end
+  status 200
+    body ''
   
 end
 
