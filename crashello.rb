@@ -69,6 +69,7 @@ post '/kaboom/?:board_name/?:list_name' do
   if !error.nil?
     puts "Error adding card to Trello: #{error}"
   end
+  
   status 200
   body ''
 end
