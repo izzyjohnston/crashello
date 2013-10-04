@@ -13,6 +13,11 @@ configure do
   @@board = Trello::Board.all.find {|board| board.name == ENV['TRELLO_BOARD_NAME']}
 end
 
+get '/' do
+  status 200
+  body ''
+end
+
 post '/kaboom/:board_name' do
   list = nil
   if !params[:board_name].empty?
@@ -42,7 +47,6 @@ post '/kaboom/:board_name' do
     puts "Error posting to Trello: Invalid board name"
   end
   status 200
-    body ''
-  
+  body ''
 end
 
